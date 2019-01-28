@@ -1,0 +1,168 @@
+
+--------------------------------------------------------------------------------------------
+#1
+--------------------------------------------------------------------------------------------
+
+#include <stdio.h>
+  int xy,x, char c; float f; //error --> (syntax - missing semicolon, and declaration of char)
+  float arr[10]   //error --> (syntax - missing semicolon)
+  int i#rate = 10; //error --> (lexical - illegal characther '#' in between variables)
+  
+  int chg(int flag) { 
+     int struct = 8;
+     int i = 3; 
+     xy=4; 
+     if (flag = 0) { //error --> (logical - user means to check if flag == 0, not assign the value of flag to 0)
+       arr[i] = 1.79766E+308; //error --> (logical - no error will pop up, but too large number to store)
+     } else { 
+       arr[10] = 1.9; //error --> (dynamic semantic and/or unchecked error - during runtime, it might not give a segfault as it can change the memory location, on the other hand, it can also check for this error, and say it is an index out of bound error giving the dynamic semantic error)
+     } 
+     return flag; 
+  } 
+  int main (void){ 
+    if (xy => 10) { 
+        printf("Begin:: "); 
+    } 
+    chg(flag=0); //error --> (semantic - flag variable was not defined in this scope -- the type of flag is not determined)
+    return  0;
+                                                                      
+  }
+
+
+--------------------------------------------------------------------------------------------
+#2
+--------------------------------------------------------------------------------------------
+	.file	"gcd.c"
+	.text
+	.globl	gcdI
+	.type	gcdI, @function
+gcdI:
+.LFB0:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, -4(%rbp)
+	movl	%esi, -8(%rbp)
+	jmp	.L2
+.L4:
+	movl	-4(%rbp), %eax
+	cmpl	-8(%rbp), %eax
+	jle	.L3
+	movl	-8(%rbp), %eax
+	subl	%eax, -4(%rbp)
+	jmp	.L2
+.L3:
+	movl	-4(%rbp), %eax
+	subl	%eax, -8(%rbp)
+.L2:
+	movl	-4(%rbp), %eax
+	cmpl	-8(%rbp), %eax
+	jne	.L4
+	movl	-4(%rbp), %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	gcdI, .-gcdI
+	.ident	"GCC: (Debian 6.3.0-18+deb9u1) 6.3.0 20170516"
+	.section	.note.GNU-stack,"",@progbits
+
+
+Answer:
+
+Each section is broken down as according to the assembly code:
+
+.LFBO is for the creation of the stack frame
+	pushq %rbp saves the address of the previous stack frame
+	movq %rsp %rbp address of the current stack frame
+	-4(%rbp) stores the first arg
+	-8(%rbp) stores the second arg
+.L2 is for the not equals portion of the while loop
+	it compares the first and second register together
+	if they are not equal then it loops back to .L4
+	else it moves the value stored in register %eax into the first argument variable
+	pops the frame pointer off
+	returns
+.L4 is for the if statement
+	it compares the first and second register together
+	if they are less than or equal to, then it jumps to .L3
+	else it subtracts the second register from the first register value and stores the result in the first register, then jumps back to the while loop -- .L2
+.L3 is for the else statememnt
+	it just subtracts the first register from the second register value, and stores the result in the second register, and continues to go to the next statement -- .L2
+
+
+--------------------------------------------------------------------------------------------
+#3
+--------------------------------------------------------------------------------------------
+
+The problem that was occuring was that the code was trying to sometimes divide by 0.  This will give us an exception error.  This is fixed by the additional statements 
+inside the while loop.  But on top of that, the final answer if returned strictly by i, will not give the correct result.  Thats because, whatever the bigger number is does \
+not always contain the correct answer. Instead sometiems the bigger number just contains 0, which shows that the gcd function has ended.  
+Thus, we have to check whether i contains 0, then return j, else just return i because j was the bigger number and would contain the 0.
+
+Corrected code:
+
+    int gcdM(int i, int j) {
+       while ( i != j && i > 0 && j > 0) { 
+           if (i > j) {
+              i = i % j;
+           } else {
+              j = j % i;
+           }
+        }
+        return (i > j) ? i : j;
+    } 
+
+When given smaller values of i and j, the running time is appproximately the same.  However, when dealt with bigger numbers, gcdM will definitely be faster.  This is because 
+gcdI takes many more steps to do the same thing that gcdM does.  gcdI subtracts the number from itself max(i,j)/min(i,j) times.  On the other hand, gcdM just does this operation
+in one go.  It just divides the number, and returns its remainder.
+
+ 
+--------------------------------------------------------------------------------------------
+#4
+--------------------------------------------------------------------------------------------
+
+1. Here is the recursion veriosn of gcdI:
+
+int gcdR(int i, int j){
+	if(i > j) return gcdR(i-j, j);
+	else if(i==j) return i;
+	else return gcdR(i, j-i);
+}
+
+2. Computation complexity:
+3. Iterative or Recursive? 
+
+
+--------------------------------------------------------------------------------------------
+#5
+--------------------------------------------------------------------------------------------
+At the hardware level, iterative instructions is just a simple comparative instruction check, then a jump.  However, recursion would cause the low level code to
+push another stack, jump, return and pop off the stack.  Thus, they increase the amount of memory the program uses. However, the pushing and popping off the stack 
+can be optimized for recursion to avoid.  The recursion methods can be better in terms of mathematics as it is better for reading ability.  
+However, recursion solutions can take more time to design and develop for programmers.  For simple coding purposes the iterative methods can be better, as it is more appealing to programmers.
+
+
+
+--------------------------------------------------------------------------------------------
+#6
+--------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
