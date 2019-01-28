@@ -135,17 +135,73 @@ int gcdR(int i, int j){
 }
 
 2. Computation complexity:
+
+
 3. Iterative or Recursive? 
-
-
---------------------------------------------------------------------------------------------
-#5
---------------------------------------------------------------------------------------------
 At the hardware level, iterative instructions is just a simple comparative instruction check, then a jump.  However, recursion would cause the low level code to
 push another stack, jump, return and pop off the stack.  Thus, they increase the amount of memory the program uses. However, the pushing and popping off the stack 
 can be optimized for recursion to avoid.  The recursion methods can be better in terms of mathematics as it is better for reading ability.  
 However, recursion solutions can take more time to design and develop for programmers.  For simple coding purposes the iterative methods can be better, as it is more appealing to programmers.
 
+
+--------------------------------------------------------------------------------------------
+#5
+--------------------------------------------------------------------------------------------
+Python:
+
+#! /usr/bin/env python
+import sys
+
+def gcdI(i, j):
+	while i != j:
+		if i > j:
+			i = i - j
+		else:
+			j = j - i
+	return i
+
+def gcdR(i, j):
+	if i > j : return gcdR(i-j, j)
+	elif i == j : return i
+	else : return gcdR(i, j-i)
+
+
+if len(sys.argv) != 3:
+  print("%s usage: [NUMBER] [NUMBER]" % sys.argv[0])
+  exit()
+
+print("gcdI() : "+ str( gcdI(int(sys.argv[1]), int(sys.argv[2]))))
+print("gcdR() : "+ str( gcdR(int(sys.argv[1]), int(sys.argv[2]))))
+
+
+Ruby:
+
+#! /usr/bin/env ruby
+
+def gcdI(i, j)
+	while i != j
+		if i > j
+			i = i - j
+		else
+			j = j - i
+		end
+	end
+	return i
+end
+
+def gcdR(i, j)
+	return gcdR(i-j, j) if i > j
+	return i if i == j
+	return gcdR(i, j-i)
+end 
+
+if ARGV.length != 2 
+  puts "gcd_full.rb usage: [NUMBER] [NUMBER]" 
+  exit
+end
+
+puts "gcdI() : " + gcdI(ARGV[0].to_i, ARGV[1].to_i).to_s
+puts "gcdR() : " + gcdR(ARGV[0].to_i, ARGV[1].to_i).to_s
 
 
 --------------------------------------------------------------------------------------------
