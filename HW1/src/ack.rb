@@ -1,10 +1,12 @@
+#Maitri Mangal
+#CS471 Assignment 1
+
 #! /usr/bin/env ruby
 
 def ack(m, n)
 	return n+1 if m == 0
 	return ack(m-1, 1) if n == 0 and m > 0
-	return ack(m-1, ack(m, n-1)) if n > 0 and m > 0
-	return -1
+	return ack(m-1, ack(m, n-1))
 end
 
 if ARGV.length != 2 

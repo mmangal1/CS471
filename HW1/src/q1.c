@@ -1,3 +1,6 @@
+//Maitri Mangal
+//CS471 Assignment 1
+
 #include <stdio.h>
   int xy,x, char c; float f; //error
   float arr[10]   //error

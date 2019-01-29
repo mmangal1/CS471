@@ -1,3 +1,6 @@
+//Maitri Mangal
+//CS471 Assignment 1
+
 #include <stdio.h>
 #include "gcd.h"
 

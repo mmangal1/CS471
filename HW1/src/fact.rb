@@ -1,3 +1,6 @@
+#Maitri Mangal
+#CS471 Assignment 1
+
 #! /usr/bin/env ruby
 
 def fact(n)

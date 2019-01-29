@@ -1,3 +1,6 @@
+//Maitri Mangal
+//CS471 Assignment 1
+
 #include <stdio.h>
 
 int ack(int m, int n){
@@ -5,11 +8,8 @@ int ack(int m, int n){
 		return(n+1);
 	}else if(n == 0 && m > 0){
 		return ack(m-1, 1);
-	}else if(n > 0 && m > 0){
-		return ack(m-1, ack(m, n-1));
 	}else{
-		//shouldnt reach here
-		return -1;
+		return ack(m-1, ack(m, n-1));
 	}
 }
 
