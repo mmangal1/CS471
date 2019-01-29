@@ -240,6 +240,17 @@ e)An error that the compiler can neither catch nor easily genereate code to catc
 
 True or False. Some programming languages are more "powerful" then others.  Explain your answer.
 
+Powerful languages depend on the context of what exactly you are trying to do.  For example, if you are working to create a website, you dont necessarily want to use C++,
+instead, you will use a language that is dedicated to web programming like php, javascript, html etc.  This doesnt mean that certain web apps cannot use C++, it just means
+that for this particular scenario, there have been other languages created for the specific task you are trying to carry out.  On the other hand, if you want a program that
+runs explicitly fast, you might want to use C because it can be compiled down to assembly and machine code much faster than other high level progrmaming languages like Java.
+If you want to use different libraries, then perhaps you want to use Python as it has so many libraries that are already built to carry out certain programs.  Hence, these
+libraries make it much easier for the programmer to use and code with.  It is much more easy to read and code, whereas writing the same code in C or C++ might require
+thousands of more lines of code.  Even now, there are different languages being created to help with specific tasks.  For example, Julia is the language to carry out data
+analytic related jobs. This new language is created for the specific data analytic job.  It does the best in the task that it was designed to do.  This means that it is powerful
+in the data analytic field, but might not necessarily be strong in creating web apps.  Hence, some programming languages are more powerful than others really depends on 
+what the task requires, what the programmer values more -- readability, and or writing efficient code.
+
 
 --------------------------------------------------------------------------------------------
 #8
