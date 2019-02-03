@@ -21,3 +21,49 @@ The precedence will still remain where multiplication is higher than addition.
 --------------------------------------------------------------------------------------------
 #2
 --------------------------------------------------------------------------------------------
+Modified Grammar:
+
+<command> := <plus>
+<plus> := <minus> + <plus> | <minus>
+<minus> := <mult> - <minus> | <mult>
+<mult> := <avg> * <mult> | <avg>
+<avg> := <factor> @ <avg> | <factor>
+<factor> := (<plus>) | <number>
+<number> := <digit><number> | <digit>
+<digit> := 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+--------------------------------------------------------------------------------------------
+#3
+--------------------------------------------------------------------------------------------
+Left Derivations:
+
+a) 1 + 2 - 2
+
+command --> plus --> minus + plus --> mult + plus --> avg + plus --> factor + plus --> number + plus
+--> digit + plus --> 1 + plus --> 1 + minus --> 1 + mult - minus --> 1 + avg - minus --> 1 + factor - minus
+--> 1 + number - minus --> 1 + digit - minus --> 1 + 2 - minus --> 1 + 2 - mult --> 1 + 2 - avg --> 1 + 2 - factor
+--> 1 + 2 - number --> 1 + 2 - digit --> 1 + 2 - 2
+
+b) 2 - 3 * 5
+
+command --> plus --> minus --> mult - minus --> avg - minus --> factor - minus --> number - minus --> 2 - minus
+--> 2 - mult --> 2 - avg * mult --> 2 - factor * mult --> 2 - number * mult --> 2 - 3 * mult --> 2 - 3 * avg
+--> 2 - 3 * factor --> 2 - 3 * number --> 2 - 3 * 5
+
+c) 10 - 5 @ 2 
+
+command --> plus --> minus --> mult - minus --> avg - minus --> factor - minus --> number - minus --> digitnumber - minus
+--> 1number - minus --> 1digit - minus --> 10 - minus --> 10 - mult --> 10 - avg --> 10 - factor @ avg --> 10 - number @ avg
+10 - 5 @ avg --> 10 - 5 @ factor --> 10 - 5 @ number --> 10 - 5 @ 2
+
+d) 10 - 7 - 2
+
+command --> plus --> minus --> mult - minus --> avg - minus --> factor - minus --> number - minus --> digitnumber - minus
+--> 1number - minus --> 1digit - minus --> 10 - minus --> 10 - mult - minus --> 10 - avg - minus --> 10 - factor - minus
+--> 10 - number - minus --> 10 - 7 - minus --> 10 - 7 - mult --> 10 - 7 - avg --> 10 - 7 - factor --> 10 - 7 - number
+--> 10 - 7 - 2
+
+
+--------------------------------------------------------------------------------------------
+#4
+--------------------------------------------------------------------------------------------
