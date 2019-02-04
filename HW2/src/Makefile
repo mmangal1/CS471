@@ -10,4 +10,4 @@ q4: q4.c
 	gcc -g -Wall -Wextra -o q4 q4.c
 
 clean:
-	rm arith1 arith2
+	rm arith1 arith2 q4

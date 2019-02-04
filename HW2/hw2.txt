@@ -74,5 +74,64 @@ If you want to run this code, just type in the command line 'make q4' and then r
 --------------------------------------------------------------------------------------------
 #5
 --------------------------------------------------------------------------------------------
+Grammar in BNF form:
+
+<command> := <expr>
+<expr> := <expr> + <term> | <term>
+<term> := <term> * <factor> | <factor>
+<factor> := (<expr>) | <number>
+<number> := <digit><number> | <digit>
+<digit> := 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+
+Recursive:
+This code is left recursive.  This means that the expression will be evaluated from left to right.
+The precedence will still remain where multiplication is higher than addition.
+
+--------------------------------------------------------------------------------------------
+#6
+--------------------------------------------------------------------------------------------
+Modified Grammar:
+
+<command> := <plus>
+<plus> := <plus> + <minus> | <minus>
+<minus> := <minus> - <mult> | <mult>
+<mult> := <mult> * <avg> | <avg>
+<avg> := <avg> @ <factor> | <factor>
+<factor> := (<plus>) | <number>
+<number> := <digit><number> | <digit>
+<digit> := 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+--------------------------------------------------------------------------------------------
+#7
+--------------------------------------------------------------------------------------------
+Left Derivations:
+
+a) 1 + 2 - 2
+
+command --> plus --> plus + minus --> minus + minus --> mult + minus --> avg + minus --> factor + minus --> number + minus
+--> digit + minus --> 1 + minus --> 1 + minus - mult --> 1 + mult - mult --> 1 + avg - minus --> 1 + factor - mult
+--> 1 + number - mult --> 1 + digit - mult --> 1 + 2 - mult --> 1 + 2 - avg --> 1 + 2 - factor
+--> 1 + 2 - number --> 1 + 2 - digit --> 1 + 2 - 2
+
+b) 2 - 3 * 5
+
+command --> plus --> minus --> minus - mult --> mult - mult --> avg - mult --> factor - mult --> number - mult
+--> digit - mult --> 2 - mult --> 2 - mult * avg --> 2 - avg * avg --> 2 - factor * avg
+--> 2 - number * avg --> 2 - 3 * avg --> 2 - 3 * factor --> 2 - 3 * number --> 2 - 3 * 5
+
+
+c) 10 - 5 @ 2 
+
+command --> plus --> minus --> minus - mult --> mult - mult --> avg - mult --> factor - mult --> number - mult --> digitnumber - mult
+--> 1number - mult --> 1digit - mult --> 10 - mult --> 10 - avg --> 10 - avg @ factor --> 10 - factor @ factor --> 10 - number @ factor
+10 - 5 @ factor --> 10 - 5 @ number --> 10 - 5 @ 2
+
+d) 10 - 7 - 2
+
+command --> plus --> minus --> minus - mult --> mult - mult --> avg - mult --> factor - mult --> number - mult --> digitnumber - minus
+--> 1number - minus --> 1digit - minus --> 10 - minus --> 10 - mult - minus --> 10 - avg - minus --> 10 - factor - minus
+--> 10 - number - minus --> 10 - 7 - minus --> 10 - 7 - mult --> 10 - 7 - avg --> 10 - 7 - factor --> 10 - 7 - number
+--> 10 - 7 - 2
 
 
