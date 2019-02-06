@@ -129,9 +129,114 @@ command --> plus --> minus --> minus - mult --> mult - mult --> avg - mult --> f
 
 d) 10 - 7 - 2
 
-command --> plus --> minus --> minus - mult --> mult - mult --> avg - mult --> factor - mult --> number - mult --> digitnumber - minus
---> 1number - minus --> 1digit - minus --> 10 - minus --> 10 - mult - minus --> 10 - avg - minus --> 10 - factor - minus
---> 10 - number - minus --> 10 - 7 - minus --> 10 - 7 - mult --> 10 - 7 - avg --> 10 - 7 - factor --> 10 - 7 - number
---> 10 - 7 - 2
+command --> plus --> minus --> minus - mult --> mult - mult --> avg - mult --> factor - mult --> number - mult --> digitnumber - mult
+--> 1number - mult --> 1digit - mult --> 10 - mult --> 10 - minus - mult --> 10 - mult - mult --> 10 - avg - mult --> 10 - factor - mult
+--> 10 - number - mult --> 10 - 7 - mult --> 10 - 7 - avg --> 10 - 7 - factor --> 10 - 7 - number --> 10 - 7 - 2
 
+
+--------------------------------------------------------------------------------------------
+#8
+--------------------------------------------------------------------------------------------
+
+Modified code has been added to the src file under the name q8.c
+If you want to run this code, just type in the command line 'make q8' and then run using ./q8
+
+--------------------------------------------------------------------------------------------
+#9
+--------------------------------------------------------------------------------------------
+(1) C identifiers: A C identifier must start with an alpha character or an underscore, and may be followed by alphanumeric characters or the underscore.
+
+^[_a-zA-z]\w*$
+
+(2) Strings: A string must start and end with an double quote and may contain any character except the double quote itself; however, you may escape a double quote inside the string using \ -- i.e. "this is \" a string"
+
+^"([^\\"]|\\.)*"$
+
+(3) Strings over the alphabet {a,b} that contain an even number of b's. 
+
+^(a|a*ba*b)*$
+
+(4) Strings over the alphabet {a,b,c} that contain an odd number of c's.
+
+^[ab]*c[ab]*(c[ab]*c[ab]*)*$
+
+--------------------------------------------------------------------------------------------
+#10
+--------------------------------------------------------------------------------------------
+
+a) They are both used to describe the same thing.  They are describing the boolean value whether the expression is true(1) or false(0).
+
+b) _Bool was a defined keyword in the language starting with C99 standard.  _Bool will hold either 0 or 1.  However, bool wasnt a reserved word in C prior to C99.  
+Hence, they used _Bool as their reserved keyword.  However, after they added bool as a macro in the stdbool.h library.  Hence, bool will be an alias to _Bool and expand to _Bool.
+
+c) Syntactically they both offer the same thing.  However, when working with C, you will need to include the stdbool.h library to be able to use the bool keyword.  For forward
+compatibilty with C++, using bool will be more useful as it is already a defined key word in that language.  But, if youre just using C, then _Bool will be better
+as it is already a defined keyword in C, and the compiler will recognize it over bool.
+
+--------------------------------------------------------------------------------------------
+#11
+--------------------------------------------------------------------------------------------
+
+Pragmas as defined by the book just means that it provides a means to a construct that provides directives or hints to the compiler.
+
+Pragmas that appear as significant comments which dont influence the execution or semantics process, but rather hte compilation process are processed by the scanner. 
+Pragmas are processed by the scanner because they are allowed to appear anywhere in the source code.  If they were to be processed by the parser, then it would complicate
+the parser a lot.
+
+Pros:
+Can improve readability in the code
+Can help improve execution time of code
+
+Cons:
+Can restrict certain behaviors in code
+Can cause too much complexity in the scanner or parser or semantic analyzer
+
+--------------------------------------------------------------------------------------------
+#12
+--------------------------------------------------------------------------------------------
+
+a) w + x ^ y ^ z
+  (w+((x^y)^z))
+  (+w(^(^xy)z))
+   +w^^xyz
+
+b) w + x + y / z
+  ((w+x)+(y/z))
+  (+(+wx)(/yz))
+   ++wx/yz
+
+c) w * x * y ^ z
+  ((w*x)*(y^z))
+  (*(*wx)(^yz))
+   **wx^yz
+
+d) w / x * y / z
+  (((w/x)*y)/z)
+  (/(*(/wx)y)z)
+   /*/wxyz
+
+
+--------------------------------------------------------------------------------------------
+#13
+--------------------------------------------------------------------------------------------
+
+a) w + x ^ y ^ z
+  (w+((x^y)^z))
+  (w((xy^)z^)+)
+  wxy^z^+
+
+b) w + x + y / z
+  ((w+x)+(y/z))
+  ((wx+)(yz/)+)
+   wx+yz/+
+
+c) w * x * y ^ z
+  ((w*x)*(y^z))
+  ((wx*)(yz^)*)
+   wx*yz^* 
+
+d) w / x * y / z
+  (((w/x)*y)/z)
+  (((wx/)y*)z/)
+   wx/y*z/ 
 
