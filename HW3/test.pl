@@ -1,3 +1,9 @@
+/*
+   Maitri Mangal
+   CS 471 Assignment 3
+*/
+
+
 my_member(X, [X|_]).
 
 my_member(X, [_|Y]) :- my_member(X, Y).
