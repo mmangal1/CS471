@@ -1,0 +1,124 @@
+Maitri Mangal
+CS471 Assignment 8
+
+---------------------------------
+#1
+---------------------------------
+8) Why is the distinction between mutable and immutable values important in the implementation of a language with a reference model of variables?
+The difference is when the values to which the variables refer to can be changed or not. For example some languages have linked data structures that allow the varibales to change the value of it in place. On the other hand, there would be variables that refer to different objects that have the same value.  In this case, we have to differ the variables in two different ways. Its important to distinguish whether the variables refer to the same object, or if they refer to different objects that hold the same value at that time. 
+
+9) Define orthogonality in the context of programming language design
+Orthogonality means that the features can be used in any combination, and that all the combination of those features makes sense. The features, in whichever way they are combined, also needs to be consistent.
+
+11) What are the advantages of updating a variable with an assignment operator, rather than with a regular assignment in which the variable appears on both the left- and right-hand sides? 
+The advantages of using an assignment operator is that the code will be less cumbersome to read and write, and will have less redundant address calulations. The assignment operator will also eliminate the fact that there may be a side effect that happens with the code.
+
+---------------------------------
+#2
+---------------------------------
+14) Explain the notion of definite assignment in Java and C#.
+The definite assignment notion basically precludes the use of uninitialized variables. This means that every control path that the program can possibly take must use variables that have been initalized.
+
+16) Why is it impossible to catch all uses of uninitialized variables at compile time?
+Some values are stored in the heap, or in memory, and thus cannot be checked during compile time. But catching uninitalized variable during runtime is quite high.
+
+---------------------------------
+#3
+---------------------------------
+int a = 0;       
+int b = (a++ || ++a) >= (a++ && ++a);
+printf( "%d %d", a, b );
+
+int b = (a++ || ++a) >= (a++ && ++a);  a = 0
+int b = (0 || ++a) >= (a++ && ++a);    a = 1
+int b = (0 || 2) >= (a++ && ++a);      a = 2
+int b = 1 >= (a++ && ++a);             a = 2
+int b = 1 >= (2 && ++a);	       a = 3
+int b = 1 >= (2 && 4);		       a = 4
+int b = 1 >= 1;			       a = 4
+int b = 1			       a = 4
+
+
+int b = (a++ || ++a) >= (a++ && ++a);  a = 0
+int b = (a++ || ++a) >= (0 && ++a);    a = 1
+int b = (a++ || ++a) >= 0;             a = 1
+int b = (1 || ++a) >= 0;	       a = 2
+int b = 1 >= 0;	       		       a = 2
+int b = 1;			       a = 2 
+
+---------------------------------
+#4
+---------------------------------
+i = 0
+while (a[i++] != 0);
+
+for (i = 0; a[i] != 0; i++);
+
+The two loops are not equivalent. In the first while loop, we access the array a first, and then increment the i right after. We will break out of the loop once a[i] == 0, but i will still be incremented. In the second example, we will traverse the array a as well, but we will only increment the i after the iteration is done. Hence, if we match the a[i] == 0, we will simply break out of the loop instead of incrementing the i as well. Hence, outside of the loops, i will be i + 1 which is not equal to the i that was accessed for a[i] == 0. The index is going to be off by one in the while loop. But, for the while loop, the i will be the same i for a[i] == 0.
+
+
+---------------------------------
+#5
+---------------------------------
+lst = [ 1 ]
+1.upto(5){|n| lst[n]=n*lst[n-1]}
+print lst
+print "\n"
+puts lst 
+ 
+
+---------------------------------
+#6
+---------------------------------
+def preorder(self):
+	if self.left is not None:
+		for x in self.left:
+			yield x
+			yield self.label
+	if self.right is not None:
+		for x in self.right:
+			yield x
+		
+def postorder(self):
+	if self.left is not None:
+		for x in self.left:
+			yield x
+	if self.right is not None:
+		for x in self.right:
+			yield x
+			yield self.label
+
+---------------------------------
+#7
+---------------------------------
+Give an example in C in which an in-line subroutine may be significantly faster than a functionally equivalent macro. Give another example in which the macro is likely to be faster.
+
+REMOVED FROM HW
+
+
+
+---------------------------------
+#8
+---------------------------------
+2)  What does it mean for a language to be strongly typed? Statically typed? What prevents, say, C from being strongly typed?
+
+Strongly typed langauge means that the data needs to be in the type of data that has been predifined by the language implementation, and all of the data needs to be of that type. A strongly typed language can prohibit the application of any operation to any object that is not intended to support that operation.
+
+A statically typed language is a language that is strongly typed and that type checking can be performed during the compile time.
+
+C is not a strongly typed langauge due to the fact that there are still unions, type casts, subroutines with a variable number of parameters, and the interchangability between pointers and arrays.
+
+
+9) What is polymorphism? What distinguishes its parametric and subtype varieties? What are generics?
+
+Polymorphism means that the type can take multiple forms. This applies to both data and subroutines as it can take values of different types.
+
+In parametric polymorphism the type can be taken as a parameter, either explicitly or implicitly
+Int subtype polymorsphism the programmer can add additional types as extensions or refinements to an already existing type of T that works.
+
+Generics are explicit parametric polymorphism. It usually appears in statically typed languages, and is implemented during compile time. They allow a type or method to handle objects of different types. 
+
+10) What is the difference between discrete and scalar types?
+
+Discrete types are countable, or have a one to one correspondance with some subset of the integers. Examples include ints, booleans, characters.
+Scalar types are complex types, rational, real numbers, discrete numbers.
