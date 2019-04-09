@@ -1,0 +1,173 @@
+Maitri Mangal
+CS471 Assignment 9
+
+----------------------------------------
+#1
+----------------------------------------
+Page 291, exercise 6.33
+
+The following example will run the inline function faster as we will not need to re-evaluate the arguments each time it is passed in, but with macro, we will have to do that.
+
+#define addOne(x) (x+1)
+int sum = addOne(2);
+
+inline int addOne(x) {return x+1; }
+int sum = addOne(2);
+
+The following example will run the macro faster as it is just a simple replacement, instead of calling the whole function to return the same value to you every time.
+
+#define PI 3.14
+double pi = PI;
+
+inline double PI() {return 3.14; }
+double pi = PI();
+
+
+----------------------------------------
+#2
+----------------------------------------
+The compiler must unify the values if the two types are the same. This will produce a more detailed description of what their common type is. Its role in OCaml is that it allows for type inference.
+
+----------------------------------------
+#3
+----------------------------------------
+What is duck typing? What is its connection to polymorphism? In what languages does it appear?
+
+Duck typing is the idea that if it walks like a duck, and quacks like a duck, then it must be a duck. This is used to determine if the particular object can be used for a particular purpose. The objects type is determined by the presence of certain methods and properties instead of the object type itself. Essentially this is saying that we dont care what the type of the object is, we should just be able to do what we want to do with it.
+Essentially polymorphism it is important that we know what the type of the object is before we use it, and for duck typing it is the opposite. We dont care about how it behaves in polymorphism, but we care about the type. In duck typing we dont care about the type, we care about how it behaves.
+Langaugaes: SmallTalk, Objective C, Swift, Python, Ruby
+
+----------------------------------------
+#4
+----------------------------------------
+Why will C# accept int as a generic argument, but Java won’t?
+Java provided generics for purely for polymorphism. But its design was designed in a way to work with backward compatibility, with the previous version of the language, and with existing VMs and libraries. C# didnt need to be backward compatibility, and hence its compiler can just recognize that int is an int and does not need to wrap it in an Integer class.
+
+----------------------------------------
+#5
+----------------------------------------
+a) a = b = c = d
+b) a, b = c = d
+c) a = b = c = d
+
+----------------------------------------
+#6
+----------------------------------------
+
+double* dp = new double(3);
+void* vp;
+int* ip;
+
+vp = dp; //no complain
+dp = vp; //complain - invalid conversion of void* to double*
+ip = dp; //complain - invalid conversion of double* to int*
+dp = ip; //complain - invalid conversion of int* to double*
+ip = vp; //complain - invalid conversion of void* to int*
+
+ip = (int*) vp; //no complain
+ip = static_cast<int*>(vp); //no complain
+ip = static_cast<int*>(dp); //complain - invalid static_cast type conversion of double* to int*
+ip = reinterpret_cast<int*>(dp); //no complain
+
+A void pointer can be casted to another pointer, but due to things like precision, you cannot convert some pointers to each other. For example, we cannot convert double pointer to int pointer and vice versa. And *ip would not have the value 3 because the only place where we can make *ip have 3 is at the reinterpret_cast. All other places are invalid. Thus, reinterpret_cast will only work to store 3 if when we convert to another type, we can convert it back to the original type.
+
+
+----------------------------------------
+#7
+----------------------------------------
+page 346 exercise 7.17
+
+a) since the bar* and foo* are of differnt types, they will not run and give semantic error
+b) if we modify the list inside of the print_all function by for example adding another pointer in our list that is not bar*, then it will cause problems when we call it on antoher pointer with the LB and give us side effects.
+
+
+----------------------------------------
+#8
+----------------------------------------
+
+Bjarne Stroustrup, the original designer of C++, once described templates as “a clever kind of macro that obeys the scope, naming, and type rules of C++” [Str13, 2nd ed., p. 257]. How close is the similarity? What can templates do that macros can’t? What do macros do that templates don’t?
+
+Both macros and templates allow you to replace code, or write a bit more general code to allow you to have more flexiblity in your code. However, there are some differences. Macros are expanded by a preprocessor, and templates are expanded by compilers. Templates are more safe as they are compiled and seen if they are correct, whereas macros are just expanded. Templates allow you to just call the function when you need to call it, whereas macros force you to expand each and every one of the functoin you call. This calls for more overload, and unused code. Templates also allow for you to use the namespaces. Templates can be used to create a family of classes/functions, but macros only work alone. Templates allow you to have functions independent of the datatype. Macros however allow the code to be written in an easier way than templates. Although they are not as safe as templates, they allow the programmer to be faster. 
+
+----------------------------------------
+#9
+----------------------------------------
+
+What are struct tags in C? How are they related to type names? How did they change in C++?
+
+
+Struct tags in C is are essentially the names that are given to the struct declaration. Struct tags and type names have different namespaces. Both struct tags and type names are a way to identify the struct, and you use the name struct <name of struct> as the type name of the struct. For type names itself, we can use typedef for a struct, and due to them having different namespaces, we don’t have to worry about the identification for the tags and type names. In C++ the programmer is allowed to use the name for struct tag and type name, without actually using the struct keyword.
+
+
+----------------------------------------
+#10
+----------------------------------------
+Size of struct is 8 due to padding at the end of struct
+
+Address[3][7] = 1000 + 10*8*3 + 8*7
+Address[3][7] = 1000 + 240 + 56 = 1296
+
+
+----------------------------------------
+#11
+----------------------------------------
+
+double *a[n];
+array a of n pointers to double
+
+double (*b)[n];
+b is a pointer to n-length array to doubles
+
+double (*c[n])();
+c is a length n array of pointers to function that returns a double
+
+double (*d())[n];
+d is a function that returns a pointer to the array of n-length double
+
+
+----------------------------------------
+#12
+----------------------------------------
+const int k = ???; // you need to figure out the value of ???
+int * i = 0;
+struct A {
+    int x[k];
+};
+A* a = 0; 
+printf( "%d  %d  %d %d  %d  %d  ",
+         i+1, i+k, k, a+k, &(a[9]), &(a[9]) - (a+1)  );
+
+
+
+Output 4 16 4 64 8
+4: since i is an int pointer, and it starts at 0, when we add 1 to it, we will incrememnt the pointer to the next int element, since it prints out 4 we know the size of int is now 4
+16: since we know the size of int is 4, in order to get 16 as the second output, we must have moved over 4 int elements to get 0 + 4 + 4 + 4 + 4 = 16.
+4: as seen from the previous step, we moved over 4 elements to get 16, and that is the same as the size of the array (k), hence k = 4
+64: the struct has a size of k = 4 ints, int is of size 4, hence total size is 4*4 = 16, hence if we move the a pointer forward by k = 4, we get 0 + 16 + 16 + 16 + 16 = 64
+144: the struct has total size of 16, hence moving the pointer by 9, is going to give us 16*9=144
+8: this is telling you to calculate the number of elements between a+9 and a+1, which is essentially 8 elements
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
