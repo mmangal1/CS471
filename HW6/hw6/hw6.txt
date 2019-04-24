@@ -1,0 +1,128 @@
+Melanie Chen, Maitri Mangal
+Homework Assignment 6
+
+YOU NEED TO READ 
+Chapter 3: pgs 115-125 (up to 3.3)
+Chapter 8: pgs 388-398 (8.5)
+
+
+THIS ASSIGNMENT MAY BE DONE INDIVIDUALLY OR IN TEAMS OF UP TO 3 (no more than 3 members) .
+
+DUE 11:59pm on Wed (March 6)
+
+SUBMIT a txt. CODE FILES MUST be tar'd (no single submission like the .pl assignment). It would be a good idea if you copied the questions from the text book before your answers. 
+
+ALL GROUP MEMBERS MUST BE LISTED ON THE TOP OF THE file in their header.  All members must submit the SAME assignment.  If you use sources (including the textbook) for you answer -- you need to reword and cite the source.  Answers should be short and to the point.
+
+1) Page 167 exercise 3.1
+
+Indicate the binding time (when the language is designed, when the program is linked, when the program begins execution, etc.) for each of the following decisions in your favorite programming language and implementation. Explain any answers you think are open to interpretation. 
+
+Programming Language: C++
+
+- The number of built-in functions (math, type queries, etc.): Language Design Time
+
+- The variable declaration that corresponds to a particular variable reference (use): Language Implementation Time, assuming we are trying to assign the label (type) to a particular format of data (e.g. how many bits the type requires).
+
+- The maximum length allowed for a constant (literal) character string: Language Implementation Time
+
+- The referencing environment for a subroutine that is passed as a parameter: Run Time, but this is open to interpretation because in C++, we pass subroutines as function pointers and not the functions themselves.
+
+- The address of a particular library routine: Link time
+
+- The total amount of space occupied by program code and data: Load Time, if we assume that program data refers to static data. If the data includes dynamic data, then our answer would also include Run Time.
+
+2) In assignment 1 problems 2 and 3 you studied  iterative and functional versions of the gcd function.  Download and compile gcdR.c to assembly code on your machine: Use the command gcc -S gcdR.c You can run this remotely on the department machines by ssh remote.cs.binghamton.edu -l<your id>
+
+a) Draw the activation record for gcdR() based on the assembly code generated.   Field's offset should be consistent with the assembly code. 
+
++----------+ <--- rsp
+|local var |
+|(16 bytes)|
++----------+
+|-8(%rbp)  | (j)
++----------+
+|-4(%rbp)  | (i)
++----------+
+|old rbp   |
++----------+ <-- rbp
+|ret addr  |
++----------+
+
+b) Which way does the program stack grow? (i.e. towards higher addresses or lower addresses?)
+	Lower addresses
+
+c) Annotated the gcdR.s file.  Indicate all the instruction that read, write, "create" or "delete" the stack memory.  Name the fields affected by instruction.  
+e.g 31::  movl    $13, -4(%ebp) -- copies the value to the "n" argument field in the AR.
+	
+	.file	"gcdR.c"
+	.text
+	.globl	gcdR
+	.type	gcdR, @function
+gcdR:
+.LFB0:
+	.cfi_startproc
+	pushq	%rbp // Save previous stackbase/frame pointer register
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp // "CREATE" STACK MEMORY: Copy current stack-pointer register to the stackbase/frame pointer register
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp // "CREATE" STACK MEMORY: Subtract the space needed for the function's data (16 bytes) from the stack pointer (moving it to lower address)
+	movl	%edi, -4(%rbp) // "WRITE" STACK MEMORY: Copy the value to the "i" argument field in the AR
+	movl	%esi, -8(%rbp) // "WRITE" STACK MEMORY: Copy the value to the "j" argument field in the AR
+	cmpl	$0, -8(%rbp) // "READ" STACK MEMORY: Compare the value of the "j" argument field in the AR to zero
+	jne	.L2 // Move to the else block if not equal
+	movl	-4(%rbp), %eax // "READ" STACK MEMORY: Move the value of the "i" argument into the return register
+	jmp	.L3 // Exit
+.L2: // Else block
+	movl	-4(%rbp), %eax // "READ" STACK MEMORY: Move the value of the "i" argument into a temporary register
+	cltd
+	idivl	-8(%rbp) // "WRITE" STACK MEMORY: Perform the modulo operation ("i" argument divided by "j" argument) - remainder is stored in %edx
+	movl	-8(%rbp), %eax // Move new "j" argument to temporary register
+	movl	%edx, %esi // Move new "j" argument into register for second param
+	movl	%eax, %edi // Move new "i" argument into register for first param
+	call	gcdR // Call the next recursive loop
+.L3: // Exit
+	leave // "DELETE" STACK MEMORY: Release the stack frame by copying the stackbase/frame pointer register contents into the stack pointer register, pop the value of the previous frame's stackbase/frame pointer into %rbp
+	.cfi_def_cfa 7, 8
+	ret 
+	.cfi_endproc
+.LFE0:
+	.size	gcdR, .-gcdR
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609"
+	.section	.note.GNU-stack,"",@progbits
+
+3) Now compile gcdR.c to assembly code on your machine using the command "gcc -O2 -S gcdR.c". Compare the assembly file created using optimization switch, -O2, with the assembly file created without optimization(above #2).  Pay attention to how gcd's recursion is "implemented".  How are they different?
+
+The optimized version of gcd doesn't create a new stack frame for every recursive call of the function. As a result, the number of instructions is decreased because the optimized version uses the test instruction to set flags that can be used for jumps. The previous functionality spanning several subroutines is now condensed into one, .L3. In the optimized version, the subroutines are ordered so that one subroutine (.L4) can move directly into the next (.L3). Finally, the optimized version uses tail-call optimization and directly manipulates values within the registers conventionally used to return values (%eax) and update arguments (%edi, %esi).
+
+4) Many storage-management algorithms maintain a list of free blocks.  Here are two different algorithms, first fit and best fit, used to search this list and return a block of the appropriate size.  Which strategy, if either, will result in lower external fragmentation?  What does external fragmentation depend on?
+
+The free list is a singly-linked list containing all the available blocks on the heap. Before any memory is allocated, it contains the entire memory in one block. 
+
+When a process is looking to allocate a specific amount of memory, the first fit algorithm will return the first block able to fit that request, whereas the best fit algorithm will return the smallest block among all those able to fit the request.
+
+Neither algorithm results in lower external fragmentation. External fragmentation depends on the distribution of size requests.
+(Scott, Programming Language Pragmatics)
+
+
+5) What is the complexity of using first fit algorithm to allocate blocks? Briefly explain an algorithm to speed up the allocation. What is the complexity of this modification?
+
+The complexity of the first fit algorithm is O(n) due to the fact that you have to go through the whole list linearly to find the first free block big enough to accomodate the request. To speed up the allocation to constant time, one could use the buddy system algorithm. In this algorithm, the free blocks are of size 2^k. If an available block can satisfy the request, it is used. If no available block is big enough, then a block of size 2^(k+1) is split in two halves. One half is used to accomodate the request and the other is appended to the kth free block list. During deallocation, the block is merged with either or both of its physical neighbors and then added to the appropriate size free block list.
+
+ 6) Page 398 cyu # 26. YOU ANSWER should be short and concise but complete.
+
+A garbage is an object that programmer will never be used, nor need a reference to.  Since these objects are stored on the heap, if these objects are not removed once they are done being used, then the heap may run out of memory, or cause bugs and errors. 
+
+Pros: 
+- Tracing requires only one pointer per heap block
+- Tracing handles cycles
+- Reference counting doesn't significantly slow the program to do its work
+
+Cons: 
+- Reference counters require additional space for a counter variable associated with every object
+- Reference counting doesn't handle cycles
+- Tracing requires updates each time pointers are manipulated in the program
+- Tracing can significantly stop the program periodically to do its work
+
+Time taken by tracing is dependent on heap size, whereas time taken by reference counting is dependent on the number of objects being tracked.

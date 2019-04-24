@@ -1,0 +1,191 @@
+Melanie Chen and Maitri Mangal
+
+1) 
+
+Page 124 CYU #4
+Explain the distinction between the lifetime of a name-to-object binding and its visibility.
+
+The lifetime of a name-to-object binding describes the period of time between creation and destruction of that binding. Destruction can occur if the object is stack-allocated and is later manually deallocated or garbage collection -- or the program ends. Visibility of a name-to-object binding describes the scope of the binding. For example, two objects with the same name might still be live but one could hide the other via scope rules.
+
+Page 135 CYU #12
+What do we mean by the scope of a name-to-object binding?
+
+The scope of a name-to-object binding refers to the textual area in code where it is active.
+
+Page 167 #3.4
+Give three concrete examples drawn from programming languages with which you are familiar in which a variable is live but not in scope.
+
+- Dangling pointers
+- Variable in an inner scope and variable in the enclosing scope have the same name, but the inner variable hides the outer one.
+- Private data members
+
+2)
+
+Page 169 #3.7
+As part of the development team at MumbleTech.com, Janet has written a list manipulation library for C that contains, among other things, the code in Figure 3.16.
+
+a) Accustomed to Java, new team member Brad includes the following code in the main loop of his program:
+
+	list_node* L = 0;
+	while (more_widgets()) {
+		L = insert(next_widget(), L);
+	}
+	L = reverse(L);
+
+Sadly, after running for a while, Brad's program always runs out of memory and crashes. Explain what's going wrong.
+
+When Brad assigns the pointer returned from reverse() to L, he needs to free the memory associated with the original, now unused list. If he doesn't this constitutes a memory leak since that memory cannot be recaptured and his program crashes.
+
+b) After Janet patiently explains the problem to him, Brad gives it another try:
+
+	list_node* L = 0;
+	while (more_widgets()) {
+		L = insert(next_widget(), L);
+	}
+	list_node* T = reverse(L);
+	delete_list(L);
+	L = T;
+
+This seems to solve the insufficient memory problem, but where the program used to produce correct results (before running out of memory), now its output is strangely corrupted, and Brad goes back to Janet for advice. What will she tell him this time?
+
+Janet will tell Brad that the delete_list() function frees the memory associated with not only the list nodes, but also the data (widgets) stored at those nodes. The list pointed to by L (and now T) contains dangling references, locations in the heap that have been freed but are still used (improperly) within the reversed list.
+
+3)
+
+Page 172 #3.16
+As noted in Section 3.6.3, C# has unusually sophisticated support for first-class subroutines. Among other things, it allows delegate to be instantiated from anonymous nested methods, and gives local variables and parameters unlimited extend when they may be needed by such a delegate. Consider the implications of these features in the following C# program:
+
+	using System;
+	public delegate int UnaryOp(int n);
+		// type declaration: UnaryOp is a function from ints to ints
+
+	public class Foo {
+		static int a = 2;
+		static UnaryOp b(int c) {
+			int d = a + c;
+			Console.WriteLine(d);
+			return delegate(int n) { return c + n; };
+		}
+		public static void Main(string[] args) {
+			Console.WriteLine(b(3)(4));
+		}
+	}
+
+What does this program print?
+
+5
+7	
+
+Which of a, b, c, and d, if any, is likely to be statically allocated? Which could be allocated on the stack? Which would need to be allocated in the heap? Explain.
+
+a and b are likely to be statically allocated, because the static keyword indicates there is only one version of each a and b. c is likely to be allocated on the heap because it has unlimited extent and must be able to be referenced even after b() has returned (because it is part of the referencing environment for the anonymous function returned by b()). d is likely to be allocated on the stack because it is an ordinary local variable and its lifetime does not extend after the return of the corresponding b() call.
+
+4) Consider the following pseudo code:
+
+   x : integer := 9
+   y : integer := 20
+   procedure add()
+         x := x + y
+   procedure second(P : procedure)
+         x : integer := 3
+         P()
+   procedure first()
+         y : integer := 2
+         second(add)
+
+   first()
+   write integer(x)
+
+a) What does this program print if the language uses static scoping?
+
+29
+
+b) Explain why 11 is printed out if the language uses dynamic scoping with deep binding.
+
+The call to first() creates a binding of 2 to y. Then a reference to add is created and passed to second(). Due to deep binding, the referencing environment (containing bound values of x and y) is determined at the the creation time of the add reference, so x and y are 9 and 2 respectively. Then P() is called, which adds 9+2 to get 11 and assigns it to x. Due to deep binding, the global x was bound and changed in add(), so write integer(x) prints 11.
+
+Explain why 9 is printed out if the language uses dynamic scoping with shallow binding.
+
+The call to first() creates a binding of 2 to y. Then a reference to add is created and passed to second(). Then within second(), x is bound to 3. Due to shallow binding, the referencing environment (containing bound values of x and y) is determined when the reference to add is actually used, so x and y are 3 and 2 respectively. Due to dynamic scoping, the y binding is taken from the declaration in first() and the x binding is taken from the declaration in second(). Then P() is called, which adds 3+2 to get 5 and assigns it to x. Due to shallow binding, the global x is unchanged, so write integer(x) prints 9.
+
+5) Run the following program in Perl.
+
+sub foo {
+	my $lex = $_[0];
+	sub bar {
+		print "$lex\n";
+		$lex = 5;
+	};
+	print "Call to foo ";
+	print "$lex\n";
+	bar();
+}
+
+foo(2);
+foo(3);
+
+You may be surprised by the output. Perl 5 allows named subroutines to nest, but does not create closures for them properly. Rewrite the code above to create a reference to an anonymous local subroutine and verify that it does create closures correctly. Add the line use diagnostics; to the beginning of the original version and run it again. Based on the explanation this will give you, speculate as to how nested named subroutines are implemented in Perl 5.
+
+Modified code:
+
+sub foo {
+	my $lex = $_[0];
+	print "Call to foo ";
+	print "$lex\n";
+	(sub { 
+  		print "$lex\n";
+		$lex = 5;
+	})->();
+}
+
+foo(2);
+foo(3);
+
+Nested named subroutines implement something similar to shallow binding - the referencing environment (e.g. the value of lex) is determined during the first run of foo, when bar is first used. In subsequent calls to bar, the environment is fixed and the value of lex is 5.
+
+6) Page 768 #14.13
+
+In Section 14.4.1 we claimed that nested blocks in Ruby were part of the named scope in which they appear. Verify this claim by running the following Ruby script and explaining its output:
+
+def foo(x)
+	y = 2
+	bar = Proc.new {
+		print x, "\n"
+		y = 99
+	}
+	bar.call()
+	print y, "\n"
+end
+
+foo(3)
+
+In the above script, since the nested block bar is part of the named scope foo in which it appears, it can access the value x passed it as a parameter, so print x prints 3. print y prints 99 because again the scope is the same and bar can reference y and bind it to 99.
+
+Now comment out the second line ( y = 2 ) and run the script again. Explain what happens. Restate our claim about scoping more carefully and precisely.
+
+The line print y raises an error: "undefined local variable or method 'y'". This is because although bar can access variables from the outer scope (like x), its own variables cannot be accessed from the outer scope. So the scope of foo doesn't know about the y declaration. The claim should be: In Ruby, nested blocks can access variables in the named scope in which they appear, but variables defined within their own scope does not extend to the enclosing scope.
+
+7) Page 286 #6.1
+
+We noted in Section 6.1.1 that most binary arithmetic operators are left-associative in most programming languages. In Section 6.1.4, however, we also noted that most compilers are free to evaluate the operands of a binary operator in either order. Are these statements contradictory? Why or why not?
+
+These statements are not contradictory. The associativity of an operator can be left-associative but this doesn't say anything about the order in which the operands of this operator are evaluated by the compiler. For example, in the expression a - f(b) - c * d, we know that due to left-associativity, a - f(b) will be evaluated before applying this as a left operand in subtraction with c * d. However, we don't know if the compiler will evaluate a - f(b) OR c * d first.
+
+8) Page 287 #6.7
+
+Is &(&i) ever valid in C? Explain.
+
+No, the unary operator & returns the address of its operand. So &i returns the address of i (whether i is a primitive type, or even a pointer). This address is not an lvalue, but the operand of & must be an lvalue. So we can't apply & to the result of &i.
+
+9) Page 287 #6.9
+
+In Section 6.1.2 (“Orthogonality”), we noted that C uses = for assignment and == for equality testing. The language designers state: “Since assignment is about twice as frequent as equality testing in typical C programs, it’s appropriate that the operator be half as long” [KR88, p. 17]. What do you think of this rationale?
+
+This rationale isn't enough to stand on its own as a reason for making = associated with assignment and == associated with equality checking. A more robust line of reasoning could include this fact, in conjunction with the idea that other languages use = for assignment and == for equality testing, which makes C consistent with them.
+
+10) Page 245 CYU #14
+
+Explain the notion of definite assignment in Java and C#.
+
+Definite assignment in Java and C# is a conservative rule checked by the compiler that requires that every variable in a given expression must be initialized regardless of which control path (out of all possibilities) was used to reach the expression. It is based on control flow of the program.
+

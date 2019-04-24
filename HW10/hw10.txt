@@ -1,0 +1,225 @@
+Maitri Mangal
+CS471 Assignment 10
+
+
+------------------------------------------------------
+#1
+------------------------------------------------------
+Page 421 (chapter 9) CYU 11,12
+
+11)
+How does an in-line subroutine differ from a macro?
+Macros handled by preprocessor, inline handled by compiler. Macros will be expanded whether or not its correct or not, while the inline has more checking in place made by the programmer or compiler.
+
+Under what circumstances is it desirable to expand a subroutine in-line?
+If we have smaller functions then we might want to use expanded in-line, or if we want to improve the performance of the programs, then we can use inline functions as they dont require a call stack
+
+------------------------------------------------------
+#2
+------------------------------------------------------
+Page 440 CYU 19
+9) What is an r-value reference? Why might it be useful?
+R-value reference is basically when you have an argument that usually is considered as an r-value, it is being allowed to be passed as a function by reference.
+It is useful when we are trying to keep the states the same or transfer states from one object ot another instead of creating a temporary state in between and then destroying that state. For exmple, if we have an obj o = foo(1) then this will create a temporary object inside foo, carryout its function and then destroy the state of taht object. Instead, if we want to keep and transfer the temporary object over (instead of copying it over to o), we will use r-value.
+
+
+------------------------------------------------------
+#3
+------------------------------------------------------
+Page 461 CYU 36
+36) What is the difference between a coroutine and a thread?
+Coroutines use the transfer operation whereas threads dont have an explicit transfer concept. For this reason, we have a lot of extra implementation for a short amount of code with coroutines, whereas this is eliminated in threads. Hence, threads are more commonly used than coroutines.
+
+
+------------------------------------------------------
+#4
+------------------------------------------------------
+Page 461 CYU 41,42
+What is an event in the programming language sense of the word?
+Event is something that the running program needs to respond to. It runs outside of the program, at any time, so the program needs to detect this and respond to it.
+
+Summarize the two main implementation strategies for events.
+There are two methods -- sequential and thread-based. The sequential method invokes a setup_handler library routine which essentially prepares to recieve events, and in its parameter it will pass the subroutine that it wants to call once the event actually occurs. At the hardware level, an interruption will occur and saves P registers, switches to a different stack, and then jumps to another address defined in the kernel. In thread-based implementation we have a separate handler thread. This will make a system call to the next event and then waits for it to occur. The main program however can still be executing.
+
+
+------------------------------------------------------
+#5
+------------------------------------------------------
+Page 463 exercise 9.4
+
+Consider the following (erroneous) program in C:
+	void foo() {
+		int i;
+		printf("%d ", i++);
+	}
+	int main() {
+		int j;
+		for (j = 1; j <= 10; j++) foo();
+	}		
+Local variable i in subroutine foo is never initialized. On many systems,
+however, the program will display repeatable behavior, printing 01234
+56789. Suggest an explanation. Also explain why the behavior on other
+systems might be different, or nondeterministic.
+
+The standard defines varialbes to have garbage values if they are not initalized, however, it is likely that the program might have actually initalized or put zeros in each space before starting the program. It is possible to have nondeterministic behavior due to the fact that on one system the garbage value retained from the other programs before was actually kept, and not zeroed out like it did in this program. This would mean that instead of the zero starting value, we have a random number as the starting value. Hence, we will get a different result/behavior when called.
+
+
+------------------------------------------------------
+#6
+------------------------------------------------------
+page 465 exercise 9.15
+
+Consider the following declaration in C:
+double(*foo(double (*)(double, double[]), double)) (double, ...);
+Describe in English the type of foo.
+
+Foo is a pointer to a function that has parameters of 
+	a pointer to a function that has parameters of
+		 double, and a double array, and returns a double
+	double
+that returns a pointer to a function who takes in as paramters:
+	double
+	uncountable number of arguments
+and returns a double
+
+
+------------------------------------------------------
+#7
+------------------------------------------------------
+Consider the following function/macro definition in C:
+#define SQUARE(x) x*x
+      int squaref (int x) {
+             return x * x;
+      }
+
+What is the result of the invocation of squaref(a) ? (Assume pass by value semantics.)
+
+25
+
+What is the computed result  of SQUARE(a)?   (Macro expansion.)
+
+25
+
+Give an example where squaref(x) and SQUARE(x) compute different values.
+
+squaref(10+10) = 400
+SQUARE(10+10) = 10+10*10+10 = 10+100+10 = 120
+
+Assume a = 5. 
+
+
+------------------------------------------------------
+#8
+------------------------------------------------------
+Consider the following code snippet in C-like syntax:
+int a[3];
+
+int runit(){
+   i = 1;
+   a[0] = 2;
+   a[1] = 1;
+   a[2] = 0;
+   mys(i,a[i]);
+   print(i, a[0], a[1], a[2]);
+   mys(a[1],a[i]);
+   print(i, a[0], a[1], a[2]);
+   return 0;
+}
+void mys(int x, int y){
+   x = x + y;
+   y = x - y;
+   x = x - y;
+}
+
+What is the printout of runit()  assuming each of the following parameter-passing mechanisms.  Show how you determined the answer.   There may be more than one correct answer.
+
+By value.
+The original values will not change when mys is called, hence result:
+1 2 1 0
+1 2 1 0
+
+By reference.
+When mys() is called, x is i, and y is a[1]. Therefore first i = i + a[i] = 1 + a[1] = 1 + 1 = 2, second a[1] = 2 - a[1] = 2 - 1 = 1, and third i = 2 - a[1] = 2 - 1 = 1
+Hence we will print 1 2 1 0.
+For the second mys(), we will send a reference to a[1] as x and a[1] as the y. Then first a[1] = a[1] + a[1] = 1 + 1 = 2, a[1] = a[1] - a[1] = 2 - 2 = 0, a[1] = a[1] - a[1] = 0 - 0 = 0
+Hence we will print out 1 2 0 0
+
+By reference printed statements here are:
+1 2 1 0
+1 2 0 0
+
+By value-result (copy-in/copy-out) 
+On first call we have x = i = 1, and y = a[1] = 1.
+First mys():
+	x = 1 + 1 = 2
+	y = 2 - 1 = 1
+	x = 2 - 1 = 1
+Then these values are copied back into i and a[1]. Hence i = 1, and a[1] = 1
+Hence we get that i = 1, a[0] = 2, a[1] = 1, a[2] = 0
+For the second call we ahve a[1] as x, and a[1] as y
+Second mys():
+	x = x + y = 1 + 1 = 2
+	y = x - y = 2 - a[1] = 2 - 1 = 1
+	x = x - y = 2 - 1 = 1
+Then we will have that i = 1, a[0] = 2, a[1] = 1, a[2] = 0
+
+We will therefore print
+1 2 1 0
+1 2 1 0
+
+By macro expansion.
+For the first call we will get x = i and y = a[i]
+i = i + a[i] = 1 + a[1] = 1 + 1 = 2
+a[i] = a[2] = i - a[i] = 2 - a[2] = 2 - 0 = 2
+i = i - a[i] = 2 - a[2] = 2
+Hence we have i = 2, a[0] = 2, a[1] = 1, a[2] = 2
+Second mys()
+a[1] = x, and y = a[i]
+a[1] = a[1] + a[i] = 1 + a[1] = 1 + 1 = 2
+a[i] = a[i] - a[1] = a[1] = a[1] - a[1] = 2 - 2 = 0
+a[1] = a[1] - a[i] = 0 - a[1] = 0 - 2 = -2
+Hence we have i = 1, a[0] = 2, a[1] = -2, a[2] = 0
+
+We will print
+2 2 1 2
+1 2 -2 0
+
+By name.
+This essentially is replacing hte original varialbles with text, and hence will perform similar to macros
+Hence we will print
+2 2 1 2
+1 2 -2 0
+
+
+------------------------------------------------------
+#9
+------------------------------------------------------
+Page 526 exercise 10.14
+
+Compare Java final methods with C++ nonvirtual methods. How are
+they the same? How are they different?
+
+Both the nonvirtual methods in C++ and final methods in Java are similar in the sense that they dont allow for overriding in their respective derived classes. In java however this is more specific in the sense that you absolutely cannot try to override the methods even if they try to hide the method in the subclass -- it will result in an error. However, for C++, the nonvirtual method can be hidden and hence called upon by another object. For example, if class B that is a subclass or derived class of A, then it can call A's function by saying A::function() and hence it can be called by the B object.
+
+In C++ you can also still have the same name and signature as your nonvirtual methods in the baseclass, inside your derived class. However, if final is declared in Java, then no derived class can have hte same signature as the baseclass.
+
+------------------------------------------------------
+#10
+------------------------------------------------------
+Page 527 exercise 10.16
+
+b from the foo class will still be there, but it will now not be the default value. Essentially the virtual table just shifts everything, and adds bar's stuff to the end of the original foo virtual table when it inherits foo.
+
+since bar contains both of the b, we can access both b. however, in order to get the foo b we will have to do bar::foo::b, or cast bar to foo to access the foo b. Howver, if we default ask for b, it will return back the bar b of int.
+
+
+------------------------------------------------------
+#11
+------------------------------------------------------
+Page 527 exercise 10.20. In addition, explain why this isn't an issue for Java.
+
+If foo is an abstract class in a C++ program, why is it acceptable to declare
+variables of type foo*, but not of type foo?
+
+Since abstract classes are not implemented, we cannot determine the size of foo, hence we dont know how much space we can allocate for foo. Thus, we cannot declare a type of foo. Howver, we can declare the foo pointer because pointers are set sizes, and essentailly this foo* will point to a space allocated by foo once it is implemented. This is not a problem in java as there are no pointers in java.
+

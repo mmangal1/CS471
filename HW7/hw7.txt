@@ -1,0 +1,75 @@
+#1) 
+Lifetime of a name to object binding is the period in between the creation and destruction of this object binded. The lifetime of the object is when the object or variable is initialized to a type, while the destruction is associated when the variable or object is destructed. It can be destructed in different ways including when the variable is stack-allocated, and the variable is out of scope, it is manually deallocated, or if the program ends.
+The visibility of the binding object is determining if the variable or object can be seen or used in the scope it is currently in. The two things are not dependent on each other necessarily as a variable can lose its visibility, but the lifetime of the variable will exist — for example dangling pointers
+
+Scope is the textual region of the program in which its binding is active
+
+Dangling Pointers
+Outer variables that are not in scope in the block due to another variable named the same thing
+Private data members
+
+#2)
+	a) Java does automatic garbage collection. However, C does not do that. Hence, when Brad finishes using the list, he needs to call delete_list and free up the memory that is currently being used. If he does not free up this unused list, then the memory will keep building up until the memory runs out, and hence the program will crash.
+	b) The pointer for T was initially pointed to L. But then Brad deletes L, hence he essentially also deletes the nodes that are pointed to by T. Due to this, T will now point to garbage values, and will not provide correct outputs as desired.
+
+#3)
+5
+7
+
+
+#4)
+29 —> we decide on compile time what the value of x and y is. Thus, when we are in add we will not find any local x and y values in the add function. Hence, we will us the global values of x and y, and x+y = 9+20 = 29
+
+11 —> In deep binding we will bind the value to our variables when we are in the passing environment. Hence, when we are passing the add function, our environment has x = 9 (global variable) and y = 2 (local variable). Thus, when add is carried out, it computes and updates x = 9 + 2 = 11 and writes this x to the global variable x.
+
+9 —> in shallow binding, we will bind the value when we call the function itself. Thus, when we call add, the x will hold the value of 3, and y will hold the value of 2 (from the previous first call). Then in add, x = 2 + 3, and this will update the local x variable. That is why when we print the x value, we will get 9 back and not 5 due to the global variable not even being changed by add.
+
+
+#5)
+sub foo{
+	my $lex = $_[0];
+	my $funcref = sub {
+		print “lex\n”;
+		$lex = 5;
+	};
+	print “Call to foo ”;
+	print “$lex\n”;
+	&$funcref();
+}
+
+foo(2);
+foo(3);
+
+Diagnostic gives: (W closure) An inner (nested) named subroutine is referencing a lexical variable defined in an outer named subroutine. There is a more detailed explanation of what exactly this means.
+
+Thus essentially what this means is that when the inner subroutine is called for the first time, it sees the lex value of the outer subroutine foo. On subsequent calls, this value will not be updated no matter what the value is in the outer subroutine call. There are two copies of lex, and are no longer shared anymore. Thus, when lex is updated to 5 in the inner call, it remains this way when called with any other number later. Thus, we can infer that nested subroutines have their own scope given as soon as the first call to it happens.
+
+#6)
+
+This outputs:
+
+3
+99
+
+It prints out 3 which is the variable passed into the function foo, and then it prints out 99 because first it declares y to equal 2, but then inside the function bar, it will set y to equal 99.
+This modifies the y that is seen in the function foo because in ruby uses nested blocks that are part of the named scope in which they appear
+
+If we comment out 2 then it prints:
+
+3
+ruby14_13.rb:18:in `foo': undefined local variable or method `y' for main:Object (NameError)
+	from ruby14_13.rb:21:in `<main>'
+
+In this we can see that 3 prints out because the bar function can still see the x variable passed in. However, we cannot print out y. This is because y was never declared in the foo function, so wehn the bar function says y = 99, it remains local or in scope to only the bar funciton. But when we try to print it out in the foo function again, it will not be accessed , and hence we get the nameError as above. This says that in ruby, the inner block can see the variables in the parent block, but the parent block cannot access the variables in the child block.
+
+#7)
+
+#8)
+No it is not valid in C. This is because the & operator returns back the address of where it is located. Essentially this is saying return back the memory location of the memory location which you cannot do. Another way to look at it is that the & operator requires a lvalue as a parameter, and returns back the rvalue. Thus, the first inner & will return back a rvalue, but it cannot be used as an lvalue for the next & operator
+
+#9)
+
+
+#10)
+Definite Assignment essentially means that a variable cannot be used if it is not assigned to a value yet. It will be statically checked by the compiler. Thus, every control path to an expression must assign a value to every variable in that expression.
+
